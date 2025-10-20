@@ -53,6 +53,11 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
     }
 
     transportSource.getNextAudioBlock(bufferToFill);
+
+    if (loopEnabled && transportSource.hasStreamFinished()) {
+        goToStart();
+        play();
+    }
 }
 
 void PlayerAudio::play() {
@@ -146,4 +151,14 @@ void PlayerAudio::togglePlayPause()
 
 bool PlayerAudio::isPlaying() const {
     return playing;
+}
+
+void PlayerAudio::toggleLoop()
+{
+    loopEnabled = !loopEnabled;
+}
+
+bool PlayerAudio::isLoopEnabled() const
+{
+    return loopEnabled;
 }

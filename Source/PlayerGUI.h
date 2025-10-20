@@ -42,7 +42,8 @@ private:
     juce::TextButton goToStartButton{ "Go to Start" };
 	juce::TextButton goToEndButton{ "Go to End" };
 	juce::TextButton muteButton{ "Mute" };
-
+	juce::TextButton loopButton{ "Enable Loop" };
+   
     juce::Slider volumeSlider;
 	std::unique_ptr<juce::FileChooser> fileChooser;
 

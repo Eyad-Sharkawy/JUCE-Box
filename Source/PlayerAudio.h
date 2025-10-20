@@ -44,7 +44,9 @@ public:
     float getCurrentGain() const;
 	void togglePlayPause();
 	bool isPlaying() const;
-    
+	void toggleLoop();
+	bool isLoopEnabled() const;
+   
 private:
 	juce::AudioFormatManager formatManager;
 	std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
@@ -53,4 +55,5 @@ private:
     bool muted{ transportSource.isPlaying()};
     float lastNonMutedGain{ 0.8f };
     float currentGain{ 0.8f };
+    bool loopEnabled{ false };
 };

@@ -20,6 +20,7 @@ PlayerGUI::PlayerGUI()
     addAndMakeVisible(goToStartButton);
 	addAndMakeVisible(goToEndButton);
 	addAndMakeVisible(muteButton);
+	addAndMakeVisible(loopButton);
 
     loadButton.addListener(this);
     volumeSlider.addListener(this);
@@ -27,6 +28,7 @@ PlayerGUI::PlayerGUI()
     goToStartButton.addListener(this);
 	goToEndButton.addListener(this);
     muteButton.addListener(this);
+	loopButton.addListener(this);
     volumeSlider.setRange(0.0, 1.0, 0.01);
     volumeSlider.setValue(0.8);
 }
@@ -40,6 +42,7 @@ void PlayerGUI::resized() {
 	playPauseButton.setBounds(top.removeFromLeft(120));
     goToStartButton.setBounds(top.removeFromLeft(120));
     goToEndButton.setBounds(top.removeFromLeft(120));
+	loopButton.setBounds(top.removeFromLeft(120));
 
     area.removeFromTop(10);
     auto bottomRow = area.removeFromTop(30);
@@ -94,6 +97,11 @@ void PlayerGUI::buttonClicked(juce::Button* button)
         {
             volumeSlider.setValue(playerAudio.getCurrentGain());
 		}
+	}
+    else if (button == &loopButton)
+    {
+		playerAudio.toggleLoop();
+		playerAudio.isLoopEnabled() ? loopButton.setButtonText("Disable Loop") : loopButton.setButtonText("Enable Loop");
 	}
 }
 
