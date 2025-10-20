@@ -39,8 +39,15 @@ public:
     void setPosition(double posInSeconds);
     double getPosition() const;
     double getLength() const;
+    void toggleMute();
+    bool isMuted() const;
+    float getCurrentGain() const;
+    
 private:
 	juce::AudioFormatManager formatManager;
 	std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
 	juce::AudioTransportSource transportSource;
+    bool muted{ false };
+    float lastNonMutedGain{ 0.8f };
+    float currentGain{ 0.8f };
 };

@@ -77,7 +77,18 @@ void PlayerAudio::goToEnd()
 
 void PlayerAudio::setGain(float gain)
 {
+	currentGain = gain;
     transportSource.setGain(gain);
+
+    if (gain > 0.0f)
+    {
+        lastNonMutedGain = gain;
+        muted = false;
+    }
+    else
+    {
+        muted = true;
+	}
 }
 
 void PlayerAudio::setPosition(double posInSeconds)
@@ -93,4 +104,26 @@ double PlayerAudio::getPosition() const
 double PlayerAudio::getLength() const
 {
     return transportSource.getLengthInSeconds();
+}
+
+void PlayerAudio::toggleMute()
+{
+    if (muted)
+    {
+        setGain(lastNonMutedGain);
+    }
+    else
+    {
+        setGain(0.0f);
+    }
+}
+
+bool PlayerAudio::isMuted() const
+{
+    return muted;
+}
+
+float PlayerAudio::getCurrentGain() const
+{
+    return currentGain;
 }
