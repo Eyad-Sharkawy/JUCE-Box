@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="latest">
   <MAINGROUP id="mdGpDX" name="JUCEBox">
     <GROUP id="{2046E1FF-F17E-7F4C-851B-E9D6E00BF52F}" name="Source">
+      <FILE id="h7fF5f" name="PlayerGUI.cpp" compile="1" resource="0" file="Source/PlayerGUI.cpp"/>
+      <FILE id="EHpcPP" name="PlayerGUI.h" compile="0" resource="0" file="Source/PlayerGUI.h"/>
+      <FILE id="MjddGq" name="PlayerAudio.cpp" compile="1" resource="0" file="Source/PlayerAudio.cpp"/>
+      <FILE id="BrtNez" name="PlayerAudio.h" compile="0" resource="0" file="Source/PlayerAudio.h"/>
       <FILE id="lccbjU" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="Fb8Z8X" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="bYJ4BS" name="MainComponent.cpp" compile="1" resource="0"

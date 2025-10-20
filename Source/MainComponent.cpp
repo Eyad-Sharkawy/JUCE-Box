@@ -1,29 +1,39 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent()
+MainComponent::MainComponent() : playerGUI(playerAudio)
 {
+	addAndMakeVisible(playerGUI);
     setSize (600, 400);
+
+    // Open audio device: 0 inputs, 2 outputs
+    setAudioChannels(0, 2);
 }
 
 MainComponent::~MainComponent()
 {
+    shutdownAudio();
 }
 
 //==============================================================================
-void MainComponent::paint (juce::Graphics& g)
-{
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    g.setFont (juce::FontOptions (16.0f));
-    g.setColour (juce::Colours::white);
-    g.drawText ("Hello World!", getLocalBounds(), juce::Justification::centred, true);
+// AudioAppComponent overrides
+void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
+	playerAudio.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
+
+void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) {
+    playerAudio.getNextAudioBlock(bufferToFill);
+}
+
+void MainComponent::releaseResources() {
+    playerAudio.releaseResources();
+}
+
+//==============================================================================
+// Component overrides
+void MainComponent::paint (juce::Graphics& g) { juce::ignoreUnused(g); }
 
 void MainComponent::resized()
 {
-    // This is called when the MainComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
+    playerGUI.setBounds(getLocalBounds());
 }
