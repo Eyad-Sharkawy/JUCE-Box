@@ -22,15 +22,12 @@ public:
 	void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
 	void releaseResources() override;
 
-    //==============================================================================
-    void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
     //==============================================================================
     // Your private member variables go here...
-	PlayerAudio playerAudio;
-    PlayerGUI  playerGUI;
+    PlayerGUI  player1;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

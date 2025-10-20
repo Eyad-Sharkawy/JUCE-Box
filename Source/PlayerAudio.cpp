@@ -29,7 +29,7 @@ void PlayerAudio::releaseResources()
     transportSource.releaseResources();
 }
 
-void PlayerAudio::loadFile(const juce::File& audioFile)
+bool PlayerAudio::loadFile(const juce::File& audioFile)
 {
     auto* reader = formatManager.createReaderFor(audioFile);
 
@@ -38,7 +38,9 @@ void PlayerAudio::loadFile(const juce::File& audioFile)
 
         transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
         readerSource.reset(newSource.release());
+        return true;
     }
+    return false;
 }
 
 void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
@@ -71,4 +73,24 @@ void PlayerAudio::goToEnd()
     {
         transportSource.setPosition(transportSource.getLengthInSeconds());
     }
+}
+
+void PlayerAudio::setGain(float gain)
+{
+    transportSource.setGain(gain);
+}
+
+void PlayerAudio::setPosition(double posInSeconds)
+{
+    transportSource.setPosition(posInSeconds);
+}
+
+double PlayerAudio::getPosition() const
+{
+    return transportSource.getCurrentPosition();
+}
+
+double PlayerAudio::getLength() const
+{
+    return transportSource.getLengthInSeconds();
 }

@@ -16,29 +16,39 @@
 //==============================================================================
 /*
 */
-class PlayerGUI  : public juce::Component
+class PlayerGUI  : public juce::Component,
+                   public juce::Button::Listener,
+                   public juce::Slider::Listener
 {
 public:
-    PlayerGUI(PlayerAudio& audio);
+    PlayerGUI();
     ~PlayerGUI() override;
 
-    void paint (juce::Graphics&) override;
     void resized() override;
 
+    // audio delegation called by MainComponent
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate);
+    void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill);
+    void releaseResources();
+
 private:
-    PlayerAudio& playerAudio;
+    PlayerAudio playerAudio;
 
 
     // UI Elements
 
-	juce::TextButton loadButton;
-    juce::TextButton playButton;
-    juce::TextButton stopButton;
-    juce::TextButton startButton;
-    juce::TextButton endButton;
+	juce::TextButton loadButton{ "Load File" };
+	juce::TextButton playButton{ "Play" };
+    juce::TextButton stopButton{ "Stop" };
+    juce::TextButton goToStartButton{ "Go to Start" };
+	juce::TextButton goToEndButton{ "Go to End" };
+
+    juce::Slider volumeSlider;
 	std::unique_ptr<juce::FileChooser> fileChooser;
 
-    void setupButton();
+    // listeners
+    void buttonClicked(juce::Button* button) override;
+    void sliderValueChanged(juce::Slider* slider) override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerGUI);
 };

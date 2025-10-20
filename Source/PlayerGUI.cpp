@@ -12,68 +12,95 @@
 #include "PlayerGUI.h"
 
 //==============================================================================
-PlayerGUI::PlayerGUI(PlayerAudio& audio) : playerAudio(audio)
+PlayerGUI::PlayerGUI()
 {
-	addAndMakeVisible(&loadButton);
-    addAndMakeVisible(&playButton);
-    addAndMakeVisible(&stopButton);
-    addAndMakeVisible(&startButton);
-    addAndMakeVisible(&endButton);
+    addAndMakeVisible(loadButton);
+    addAndMakeVisible(stopButton);
+    addAndMakeVisible(volumeSlider);
+    addAndMakeVisible(playButton);
+    addAndMakeVisible(goToStartButton);
+	addAndMakeVisible(goToEndButton);
 
-    setupButton();
-
-    setSize(600, 400);
+    loadButton.addListener(this);
+    stopButton.addListener(this);
+    volumeSlider.addListener(this);
+	playButton.addListener(this);
+    goToStartButton.addListener(this);
+	goToEndButton.addListener(this);
+    volumeSlider.setRange(0.0, 1.0, 0.01);
+    volumeSlider.setValue(0.8);
 }
 
 PlayerGUI::~PlayerGUI() {}
 
-void PlayerGUI::paint(juce::Graphics& g) {
-	g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
-}
-
 void PlayerGUI::resized() {
-
-    loadButton.setBounds(10, 10, 100, 40);
-    playButton.setBounds(120, 10, 100, 40);
-    stopButton.setBounds(230, 10, 100, 40);
-    startButton.setBounds(340, 10, 120, 40);
-    endButton.setBounds(470, 10, 120, 40);
+    auto area = getLocalBounds().reduced(10);
+    auto top = area.removeFromTop(40);
+    loadButton.setBounds(top.removeFromLeft(120));
+    playButton.setBounds(top.removeFromLeft(120));
+    stopButton.setBounds(top.removeFromLeft(120));
+    goToStartButton.setBounds(top.removeFromLeft(120));
+	goToEndButton.setBounds(top.removeFromLeft(120));
+    area.removeFromTop(10);
+    volumeSlider.setBounds(area.removeFromTop(30));
 }
 
-void PlayerGUI::setupButton() {
-    loadButton.setButtonText("Load");
-	playButton.setButtonText("Play");
-	stopButton.setButtonText("Stop");
-    startButton.setButtonText("Go to start");
-    endButton.setButtonText("Go to end");
-
-	// Lambda functions for button actions
-
-    loadButton.onClick = [this]() {
+void PlayerGUI::buttonClicked(juce::Button* button)
+{
+    if (button == &loadButton)
+    {
         fileChooser = std::make_unique<juce::FileChooser>(juce::String("Select an audio file..."), juce::File(), juce::String("*.wav;*.aiff;*.mp3"));
         fileChooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
             [this](const juce::FileChooser& fc)
             {
                 auto file = fc.getResult();
                 if (file.existsAsFile())
-                    playerAudio.loadFile(file);
+                {
+                    if (playerAudio.loadFile(file))
+                        playerAudio.play();
+                }
                 fileChooser.reset();
             });
-        };
-
-    playButton.onClick = [this]() {
+    }
+    else if (button == &playButton)
+    {
         playerAudio.play();
-        };
-
-    stopButton.onClick = [this]() {
+    }
+    else if (button == &stopButton)
+    {
         playerAudio.stop();
-        };
-
-    startButton.onClick = [this]() {
+    }
+    
+    else if (button == &goToStartButton)
+    {
         playerAudio.goToStart();
-        };
+        playerAudio.play();
+    }
+    else if (button == &goToEndButton)
+    {
+		playerAudio.goToEnd();
+    }
+}
 
-    endButton.onClick = [this]() {
-        playerAudio.goToEnd();
-        };
+void PlayerGUI::sliderValueChanged(juce::Slider* slider)
+{
+    if (slider == &volumeSlider)
+    {
+        playerAudio.setGain((float) volumeSlider.getValue());
+    }
+}
+
+void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
+{
+    playerAudio.prepareToPlay(samplesPerBlockExpected, sampleRate);
+}
+
+void PlayerGUI::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
+{
+    playerAudio.getNextAudioBlock(bufferToFill);
+}
+
+void PlayerGUI::releaseResources()
+{
+    playerAudio.releaseResources();
 }

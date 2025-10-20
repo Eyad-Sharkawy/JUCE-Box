@@ -15,7 +15,7 @@
 //==============================================================================
 /*
 */
-class PlayerAudio  : public juce::ChangeBroadcaster
+class PlayerAudio
 {
 public:
     PlayerAudio();
@@ -28,11 +28,17 @@ public:
 
     // Transport controls
 
-    void loadFile(const juce::File& audioFile);
+	bool loadFile(const juce::File& audioFile);
 	void play();
     void stop();
     void goToStart();
     void goToEnd();
+
+    // Parameters / state
+    void setGain(float gain);
+    void setPosition(double posInSeconds);
+    double getPosition() const;
+    double getLength() const;
 private:
 	juce::AudioFormatManager formatManager;
 	std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
