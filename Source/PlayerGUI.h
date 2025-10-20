@@ -38,8 +38,7 @@ private:
     // UI Elements
 
 	juce::TextButton loadButton{ "Load File" };
-	juce::TextButton playButton{ "Play" };
-    juce::TextButton stopButton{ "Stop" };
+    juce::TextButton playPauseButton{ "Play" };
     juce::TextButton goToStartButton{ "Go to Start" };
 	juce::TextButton goToEndButton{ "Go to End" };
 	juce::TextButton muteButton{ "Mute" };

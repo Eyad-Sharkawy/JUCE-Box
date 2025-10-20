@@ -15,17 +15,15 @@
 PlayerGUI::PlayerGUI()
 {
     addAndMakeVisible(loadButton);
-    addAndMakeVisible(stopButton);
     addAndMakeVisible(volumeSlider);
-    addAndMakeVisible(playButton);
+    addAndMakeVisible(playPauseButton);
     addAndMakeVisible(goToStartButton);
 	addAndMakeVisible(goToEndButton);
 	addAndMakeVisible(muteButton);
 
     loadButton.addListener(this);
-    stopButton.addListener(this);
     volumeSlider.addListener(this);
-	playButton.addListener(this);
+	playPauseButton.addListener(this);
     goToStartButton.addListener(this);
 	goToEndButton.addListener(this);
     muteButton.addListener(this);
@@ -39,8 +37,7 @@ void PlayerGUI::resized() {
     auto area = getLocalBounds().reduced(10);
     auto top = area.removeFromTop(40);
     loadButton.setBounds(top.removeFromLeft(120));
-    playButton.setBounds(top.removeFromLeft(120));
-    stopButton.setBounds(top.removeFromLeft(120));
+	playPauseButton.setBounds(top.removeFromLeft(120));
     goToStartButton.setBounds(top.removeFromLeft(120));
     goToEndButton.setBounds(top.removeFromLeft(120));
 
@@ -62,21 +59,19 @@ void PlayerGUI::buttonClicked(juce::Button* button)
                 auto file = fc.getResult();
                 if (file.existsAsFile())
                 {
-                    if (playerAudio.loadFile(file))
+                    if (playerAudio.loadFile(file)) {
                         playerAudio.play();
+                        playPauseButton.setButtonText(playerAudio.isPlaying() ? "Pause" : "Play");
+                    }
                 }
                 fileChooser.reset();
             });
     }
-    else if (button == &playButton)
+    else if (button == &playPauseButton)
     {
-        playerAudio.play();
+        playerAudio.togglePlayPause();
+        playPauseButton.setButtonText(playerAudio.isPlaying() ? "Pause" : "Play");
     }
-    else if (button == &stopButton)
-    {
-        playerAudio.stop();
-    }
-    
     else if (button == &goToStartButton)
     {
         playerAudio.goToStart();

@@ -30,7 +30,7 @@ public:
 
 	bool loadFile(const juce::File& audioFile);
 	void play();
-    void stop();
+    void pause();
     void goToStart();
     void goToEnd();
 
@@ -42,12 +42,15 @@ public:
     void toggleMute();
     bool isMuted() const;
     float getCurrentGain() const;
+	void togglePlayPause();
+	bool isPlaying() const;
     
 private:
 	juce::AudioFormatManager formatManager;
 	std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
 	juce::AudioTransportSource transportSource;
-    bool muted{ false };
+	bool playing{ false };
+    bool muted{ transportSource.isPlaying()};
     float lastNonMutedGain{ 0.8f };
     float currentGain{ 0.8f };
 };

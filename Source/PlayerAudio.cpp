@@ -38,6 +38,7 @@ bool PlayerAudio::loadFile(const juce::File& audioFile)
 
         transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
         readerSource.reset(newSource.release());
+        playing = transportSource.isPlaying();
         return true;
     }
     return false;
@@ -56,10 +57,12 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
 
 void PlayerAudio::play() {
     transportSource.start();
+    playing = transportSource.isPlaying();
 }
 
-void PlayerAudio::stop() {
+void PlayerAudio::pause() {
 	transportSource.stop();
+    playing = transportSource.isPlaying();
 }
 
 void PlayerAudio::goToStart()
@@ -126,4 +129,21 @@ bool PlayerAudio::isMuted() const
 float PlayerAudio::getCurrentGain() const
 {
     return currentGain;
+}
+
+void PlayerAudio::togglePlayPause()
+{
+    if (transportSource.isPlaying())
+    {
+        pause();
+    }
+    else
+    {
+        play();
+    }
+	playing = transportSource.isPlaying();
+}
+
+bool PlayerAudio::isPlaying() const {
+    return playing;
 }
