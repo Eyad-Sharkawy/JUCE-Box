@@ -15,6 +15,22 @@
 //==============================================================================
 /*
 */
+
+struct AudioMetadata
+{
+    juce::String title;
+    juce::String artist;
+    juce::String album;
+    juce::String genre;
+    double lengthInSeconds{ 0.0 };
+    double sampleRate{ 0.0 };
+	int numChannels{ 0 };
+	juce::String filename; // Fallback when no metadata is available
+};
+
+//==============================================================================
+/*
+*/
 class PlayerAudio
 {
 public:
@@ -46,14 +62,24 @@ public:
 	bool isPlaying() const;
 	void toggleLoop();
 	bool isLoopEnabled() const;
+
+    // Metadata
+	AudioMetadata getCurrentMetadata() const;
+	void extractMetadataFromReader(juce::AudioFormatReader* reader, const juce::File& audioFile);
+   
+   // Speed control: 1.0 = normal, 2.0 = double-speed, 0.5 = half-speed
+   void setSpeed(float ratio);
    
 private:
 	juce::AudioFormatManager formatManager;
 	std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
 	juce::AudioTransportSource transportSource;
+    // Resampler wraps transportSource to change playback rate
+    juce::ResamplingAudioSource resampler{ &transportSource, false, 2 };
 	bool playing{ false };
     bool muted{ transportSource.isPlaying()};
     float lastNonMutedGain{ 0.8f };
     float currentGain{ 0.8f };
     bool loopEnabled{ false };
+   AudioMetadata currentMetadata;
 };

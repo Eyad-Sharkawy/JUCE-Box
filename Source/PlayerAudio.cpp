@@ -17,15 +17,19 @@ PlayerAudio::PlayerAudio()
 {
 	// Register the basic audio formats (WAV, AIFF, etc.)
     formatManager.registerBasicFormats();
+    // Ensure normal speed initially
+    resampler.setResamplingRatio(1.0);
 }
 
 void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    resampler.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void PlayerAudio::releaseResources()
 {
+    resampler.releaseResources();
     transportSource.releaseResources();
 }
 
@@ -34,12 +38,22 @@ bool PlayerAudio::loadFile(const juce::File& audioFile)
     auto* reader = formatManager.createReaderFor(audioFile);
 
     if (reader != nullptr) {
+        // Extract metadata using the same reader
+        extractMetadataFromReader(reader, audioFile);
+        
 		auto newSource = std::make_unique<juce::AudioFormatReaderSource>(reader, true);
 
         transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
         readerSource.reset(newSource.release());
         playing = transportSource.isPlaying();
         return true;
+    }
+    else
+    {
+        // Reset metadata if file couldn't be read
+        currentMetadata = AudioMetadata{};
+        currentMetadata.filename = audioFile.getFileName();
+        currentMetadata.title = currentMetadata.filename;
     }
     return false;
 }
@@ -52,7 +66,7 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
         return;
     }
 
-    transportSource.getNextAudioBlock(bufferToFill);
+    resampler.getNextAudioBlock(bufferToFill);
 
     if (loopEnabled && transportSource.hasStreamFinished()) {
         goToStart();
@@ -161,4 +175,45 @@ void PlayerAudio::toggleLoop()
 bool PlayerAudio::isLoopEnabled() const
 {
     return loopEnabled;
+}
+
+void PlayerAudio::extractMetadataFromReader(juce::AudioFormatReader* reader, const juce::File& audioFile)
+{
+    // Reset metadata first
+    currentMetadata = AudioMetadata{};
+    
+    if (reader != nullptr) {
+        currentMetadata.lengthInSeconds = reader->lengthInSamples / reader->sampleRate;
+		currentMetadata.sampleRate = reader->sampleRate;
+		currentMetadata.numChannels = reader->numChannels;
+		currentMetadata.filename = audioFile.getFileName();
+
+        // Try to extract metadata tags
+        auto metadata = reader->metadataValues;
+        
+        if (metadata.size() > 0) 
+        {
+            currentMetadata.title = metadata.getValue("Title", "");
+            currentMetadata.artist = metadata.getValue("Artist", "");
+            currentMetadata.album = metadata.getValue("Album", "");
+            currentMetadata.genre = metadata.getValue("Genre", "");
+        }
+
+        // If no title found, use filename
+        if (currentMetadata.title.isEmpty())
+        {
+            currentMetadata.title = currentMetadata.filename;
+        }
+    }
+}
+
+AudioMetadata PlayerAudio::getCurrentMetadata() const
+{
+    return currentMetadata;
+}
+
+void PlayerAudio::setSpeed(float ratio)
+{
+    ratio = juce::jlimit(0.25f, 4.0f, ratio);
+    resampler.setResamplingRatio(ratio);
 }
