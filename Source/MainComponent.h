@@ -9,7 +9,8 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent  : public juce::AudioAppComponent
+class MainComponent  : public juce::AudioAppComponent,
+                       public juce::KeyListener
 {
 public:
     //==============================================================================
@@ -23,6 +24,9 @@ public:
 	void releaseResources() override;
 
     void resized() override;
+    
+    // KeyListener overrides
+    bool keyPressed(const juce::KeyPress& key, juce::Component* originatingComponent) override;
 
 private:
     //==============================================================================

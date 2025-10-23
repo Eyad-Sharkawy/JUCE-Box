@@ -274,3 +274,23 @@ void PlayerGUI::updatePositionDisplay()
         positionSlider.setValue(0.0, juce::dontSendNotification);
     }
 }
+
+//==============================================================================
+// Keyboard control methods
+void PlayerGUI::togglePlayPause()
+{
+    playerAudio.togglePlayPause();
+    playPauseButton.setButtonText(playerAudio.isPlaying() ? "||" : "|>");
+}
+
+void PlayerGUI::goToStart()
+{
+    playerAudio.goToStart();
+    playerAudio.play();
+    playPauseButton.setButtonText("||");
+}
+
+void PlayerGUI::goToEnd()
+{
+    playerAudio.goToEnd();
+}

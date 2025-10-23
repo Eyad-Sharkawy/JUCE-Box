@@ -32,6 +32,11 @@ public:
     void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill);
     void releaseResources();
     void updateMetadataDisplay();
+    
+    // Keyboard control methods
+    void togglePlayPause();
+    void goToStart();
+    void goToEnd();
 
 private:
     PlayerAudio playerAudio;
