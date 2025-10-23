@@ -79,5 +79,44 @@ bool MainComponent::keyPressed(const juce::KeyPress& key, juce::Component* origi
         return true;
     }
     
+    // New keybinds with Ctrl modifier
+    if (key.getModifiers().isCtrlDown())
+    {
+        // Ctrl + Right Arrow - Next (go to end)
+        if (key.getKeyCode() == juce::KeyPress::rightKey)
+        {
+            player1.goToEnd();
+            return true;
+        }
+        
+        // Ctrl + Left Arrow - Previous (go to start)
+        if (key.getKeyCode() == juce::KeyPress::leftKey)
+        {
+            player1.goToStart();
+            return true;
+        }
+        
+        // Ctrl + R - Toggle Loop
+        if (key.getKeyCode() == 'R')
+        {
+            player1.toggleLoop();
+            return true;
+        }
+        
+        // Ctrl + Up Arrow - Volume Up
+        if (key.getKeyCode() == juce::KeyPress::upKey)
+        {
+            player1.volumeUp();
+            return true;
+        }
+        
+        // Ctrl + Down Arrow - Volume Down
+        if (key.getKeyCode() == juce::KeyPress::downKey)
+        {
+            player1.volumeDown();
+            return true;
+        }
+    }
+    
     return false;
 }

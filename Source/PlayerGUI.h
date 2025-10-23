@@ -37,6 +37,9 @@ public:
     void togglePlayPause();
     void goToStart();
     void goToEnd();
+    void volumeUp();
+    void volumeDown();
+    void toggleLoop();
 
 private:
     PlayerAudio playerAudio;

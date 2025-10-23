@@ -59,7 +59,7 @@ PlayerGUI::PlayerGUI()
     addAndMakeVisible(totalTimeLabel);
 
     // Style the labels
-    titleLabel.setFont(juce::Font(16.0f, juce::Font::bold));
+    titleLabel.setFont(juce::Font(juce::FontOptions().withHeight(16.0f).withStyle("bold")));
     titleLabel.setColour(juce::Label::textColourId, juce::Colours::white);
     artistLabel.setColour(juce::Label::textColourId, juce::Colours::lightgrey);
     albumLabel.setColour(juce::Label::textColourId, juce::Colours::lightgrey);
@@ -298,4 +298,28 @@ void PlayerGUI::goToStart()
 void PlayerGUI::goToEnd()
 {
     playerAudio.goToEnd();
+}
+
+void PlayerGUI::volumeUp()
+{
+    float currentGain = playerAudio.getCurrentGain();
+    float newGain = juce::jmin(1.0f, currentGain + 0.1f);
+    playerAudio.setGain(newGain);
+    volumeSlider.setValue(newGain, juce::dontSendNotification);
+    muteButton.setButtonText(playerAudio.isMuted() ? "Unmute" : "Mute");
+}
+
+void PlayerGUI::volumeDown()
+{
+    float currentGain = playerAudio.getCurrentGain();
+    float newGain = juce::jmax(0.0f, currentGain - 0.1f);
+    playerAudio.setGain(newGain);
+    volumeSlider.setValue(newGain, juce::dontSendNotification);
+    muteButton.setButtonText(playerAudio.isMuted() ? "Unmute" : "Mute");
+}
+
+void PlayerGUI::toggleLoop()
+{
+    playerAudio.toggleLoop();
+    playerAudio.isLoopEnabled() ? loopButton.setButtonText("Disable Loop") : loopButton.setButtonText("Enable Loop");
 }
