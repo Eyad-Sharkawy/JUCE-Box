@@ -266,6 +266,11 @@ void PlayerGUI::updatePositionDisplay()
         // Update time labels
         currentTimeLabel.setText(formatTime(currentPosition), juce::dontSendNotification);
         totalTimeLabel.setText(formatTime(totalLength), juce::dontSendNotification);
+
+        if (playerAudio.hasFinished())
+        {
+            playPauseButton.setButtonText(playerAudio.isPlaying() ? "||" : "|>");
+		}
     }
     else
     {
