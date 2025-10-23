@@ -62,6 +62,7 @@ public:
 	bool isPlaying() const;
 	void toggleLoop();
 	bool isLoopEnabled() const;
+    bool hasFinished() const;
 
     // Metadata
 	AudioMetadata getCurrentMetadata() const;

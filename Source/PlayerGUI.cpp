@@ -266,6 +266,12 @@ void PlayerGUI::updatePositionDisplay()
         // Update time labels
         currentTimeLabel.setText(formatTime(currentPosition), juce::dontSendNotification);
         totalTimeLabel.setText(formatTime(totalLength), juce::dontSendNotification);
+
+        // Check if audio has finished and update play button accordingly
+        if (playerAudio.hasFinished())
+        {
+            playPauseButton.setButtonText("|>");  // Show play button when finished
+        }
     }
     else
     {

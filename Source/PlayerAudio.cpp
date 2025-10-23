@@ -68,9 +68,14 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
 
     resampler.getNextAudioBlock(bufferToFill);
 
-    if (loopEnabled && transportSource.hasStreamFinished()) {
-        goToStart();
-        play();
+    if (transportSource.hasStreamFinished()) {
+        if (loopEnabled) {
+            goToStart();
+            play();
+        } else {
+            pause();
+            playing = false;  // Update internal state when finished without loop
+        }
     }
 }
 
@@ -216,4 +221,9 @@ void PlayerAudio::setSpeed(float ratio)
 {
     ratio = juce::jlimit(0.25f, 4.0f, ratio);
     resampler.setResamplingRatio(ratio);
+}
+
+bool PlayerAudio::hasFinished() const
+{
+    return transportSource.hasStreamFinished() && !isPlaying();
 }
